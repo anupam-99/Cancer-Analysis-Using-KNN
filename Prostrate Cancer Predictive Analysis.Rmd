@@ -1,0 +1,66 @@
+---
+title: "'Assignment 1 : Part B- Diagnosing Prostate cancer with the k-NN algorithm'"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+#install.packages("class")
+#install.packages("gmodels")
+library(class)
+library(gmodels)
+
+
+#Reading the CSV dataset file from the memory and performing Step 2
+#Step 2
+prc <- read.csv("/Users/anupam/Desktop/Prostate_Cancer.csv",stringsAsFactors = FALSE)
+
+#Removing unwanted data column
+prc <- prc[-1]
+table(prc$diagnosis_result)
+
+prc$diagnosis <- factor(prc$diagnosis_result, levels = c("B", "M"), labels = c("Benign", "Malignant"))
+
+round(prop.table(table(prc$diagnosis)) * 100, digits = 1)
+summary(wbcd[c("radius_mean", "area_mean", "smoothness_mean")])
+
+#Building normalization function for the dataset
+normalize <- function(x) {
+    return ((x - min(x)) / (max(x) - min(x)))
+}
+
+prc_n <- as.data.frame(lapply(prc[2:9], normalize))
+
+summary(prc_n$radius)
+
+#Step3
+#Setting up training and test dataset
+prc_train <- prc_n[1:75,]
+prc_test <- prc_n[76:100,]
+prc_train_labels <- prc[1:75, 1]
+prc_test_labels <- prc[76:100, 1]
+
+#Step4
+#Performing prediction
+#K=1
+prc_test_pred <- knn(train = prc_train, test = prc_test,cl = prc_train_labels, k=1)
+CrossTable(x = prc_test_labels, y = prc_test_pred ,prop.chisq=FALSE)
+#K=2
+prc_test_pred <- knn(train = prc_train, test = prc_test,cl = prc_train_labels, k=2)
+CrossTable(x = prc_test_labels, y = prc_test_pred ,prop.chisq=FALSE)
+#K=7
+prc_test_pred <- knn(train = prc_train, test = prc_test,cl = prc_train_labels, k=7)
+CrossTable(x = prc_test_labels, y = prc_test_pred , prop.chisq=FALSE)
+#K=9
+prc_test_pred <- knn(train = prc_train, test = prc_test,cl = prc_train_labels, k=9)
+CrossTable(x = prc_test_labels, y = prc_test_pred , prop.chisq=FALSE)
+#K=11
+prc_test_pred <- knn(train = prc_train, test = prc_test,cl = prc_train_labels, k=11)
+CrossTable(x = prc_test_labels, y = prc_test_pred ,prop.chisq=FALSE)
+```
+
